@@ -3,29 +3,23 @@ import constants as c
 import pygame
 
 def heuristic(node_one, node_two):
-    """Calculates the approximate distance between two nodes; usually from current to end node."""
     x1, y1 = node_one.get_pos()
     x2, y2 = node_two.get_pos()
+    h_xDiff = abs(x1 - x2)
+    h_yDiff = abs(y1 - y2)
 
-    h_cost = abs(y1 - y2) + abs(x1 - x2)
-    return h_cost
+    # hCost = h_xDiff + h_yDiff
+    return abs(y1 - y2) + abs(x1 - x2)
 
 def reconstruct_path(cameFrom, openNode, draw):
-    """Function which draws all the nodes that craeate the shortest path between startNode and endNode."""
-    while openNode in cameFrom:
-        openNode = cameFrom[openNode]
-        openNode.set_state(c.PATH)
-        draw()
+	while openNode in cameFrom:
+		openNode = cameFrom[openNode]
+		openNode.set_state(c.PATH)
+		draw()
 
 
 def pathfinding(draw, grid, startNode, endNode):
-    """Function which contains the main algorithm which will find the shortest path. Uses a heustiric which
-    is a cost function in terms of distance between currentNode to startNode (gCost) and currentNode to 
-    endNode (heursitic)."""
-    # Thanks for Tech With Tim and Wikipedia for this algortihm
-    # https://en.wikipedia.org/wiki/A*_search_algorithm
-    # https://www.youtube.com/watch?v=JtiK0DOeI4A&ab_channel=TechWithTim
-
+    """Function which contains the main algorithm which will find the shortest path."""
     count = 0   
     open_set = PriorityQueue() 
     open_set.put((0, count, startNode))
@@ -40,7 +34,6 @@ def pathfinding(draw, grid, startNode, endNode):
     f_score = {newNode: float("inf") for row in grid for newNode in row}
     f_score[startNode] = heuristic(endNode, startNode)
 
-    # Stores the past node to reconstruct the shortest path
     cameFrom = {}
     open_set_hash = {startNode}
 
@@ -56,17 +49,15 @@ def pathfinding(draw, grid, startNode, endNode):
                 if event.key == pygame.K_q:
                     pygame.quit()
 
-        # look at the current node in the open_set_hash
+
         currentNode = open_set.get()[2]
         open_set_hash.remove(currentNode)
 
-        # if our current node is endNode; we found the shortest path. Reconstruct it.
         if currentNode == endNode:
             reconstruct_path(cameFrom, endNode, draw)
             endNode.set_state(c.END)
             return True
 
-        # Consider all the currentNode's neighbours
         for neighbour in currentNode.neighbours:
             tentative_g_score = g_score[currentNode] + 1
 
@@ -85,10 +76,8 @@ def pathfinding(draw, grid, startNode, endNode):
 
         draw()
 
-        # Used node that was opened has been considered so close it. 
         if currentNode != startNode:
             currentNode.set_state(c.CLOSED)
         
-    # If no path is found, return False
+    # If no path is found, return false
     return False
-    

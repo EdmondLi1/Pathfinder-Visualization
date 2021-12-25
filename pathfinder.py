@@ -3,7 +3,7 @@ import constants as const
 import algorithm
 import pygame
 
-# Square board dimensions
+# Square board
 WIDTH = 600
 HEIGHT = 600
 ROWS = 50
@@ -52,7 +52,6 @@ def draw_grid(screen, grid, rows, cols, width_node, width, height):
 
 
 def get_pos_mouse(pos, width_node):
-    """Function that returns the position of the mouse in (y, x) or (row, col) format."""
     # y, x since we index row (y-dir), col (x-dir)
     y, x = pos
     row, col = y // width_node, x // width_node
@@ -74,18 +73,16 @@ def main():
     start_node = None
     end_node = None
 
-    # Main simulation Loop variables
-    clock = pygame.time.Clock() 
-    keepGoing = True
     start_algorithm = False 
     clickStart = False
 
-    # Main visual loop
+    # Main simulation Loop variable
+    clock = pygame.time.Clock() 
+    keepGoing = True
+
+    # main visual loop
     while keepGoing:
-
         clock.tick(100)
-
-        # Draw the grid
         draw_grid(screen, grid, ROWS, COLS, WIDTH_OF_NODE, WIDTH, HEIGHT)
 
         for event in pygame.event.get():
@@ -130,17 +127,17 @@ def main():
                         end_node = None
 
                 # Remove the start/end/nodes
-                elif (middleClick and not start_algorithm):
+                elif middleClick and not start_algorithm:
                     clickStart = True
                     
             # Start the algorithm
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and ((start_node and end_node) or clickStart):
+                if event.key == pygame.K_SPACE and (start_node and end_node) and clickStart:
                     for row in grid:
                         for node in row:
                             node.check_neighbours(grid)
 
-                    # Call the main A* Algorithm in (algorithm.py)
+                    # Tech With tim and everyone ;)
                     algorithm.pathfinding(lambda: draw_grid(screen, grid, ROWS, COLS, WIDTH_OF_NODE, WIDTH, HEIGHT),
                     grid, start_node, end_node)
            
